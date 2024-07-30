@@ -39,8 +39,13 @@ class DeviceManager:
                                    hwnd_class=self.windows_capture_config.get('hwnd_class'))
             from ok.interaction.PostMessageInteraction import PostMessageInteraction
             from ok.interaction.PyDirectInteraction import PyDirectInteraction
-            self.win_interaction_class = PostMessageInteraction if self.windows_capture_config.get(
-                'interaction') == 'PostMessage' else PyDirectInteraction
+            from ok.interaction.UmiDirectInteraction import UmiDirectInteraction
+            if self.windows_capture_config.get('interaction') == 'PostMessage':
+                self.win_interaction_class = PostMessageInteraction
+            elif self.windows_capture_config.get('interaction') == 'UmiDirectInteraction':
+                self.win_interaction_class = UmiDirectInteraction
+            else:
+                self.win_interaction_class = PyDirectInteraction
         else:
             self.hwnd = None
         self.config = Config("devices", {"preferred": "none", "pc_full_path": "none", 'capture': 'windows'})
