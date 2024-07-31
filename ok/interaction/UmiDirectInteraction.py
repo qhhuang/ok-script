@@ -122,13 +122,19 @@ class UmiDirectInteraction(BaseInteraction):
             x, y = self.capture.get_abs_cords(x, y)
             logger.info(f"left_click {x, y}")
             self.move_to(x,y)
-        pydirectinput.mouseDown()
+        button = self.get_mouse_button(key)
+        pydirectinput.mouseDown(button=button)
 
-    def mouse_up(self, key=None):
+    def get_mouse_button(self, key):
+        button = pydirectinput.LEFT if key == "left" else pydirectinput.RIGHT
+        return button
+
+    def mouse_up(self, key="left"):
         if not self.capture.clickable():
             logger.info(f"window in background, not clickable")
             return
-        pydirectinput.mouseUp()
+        button = self.get_mouse_button(key)
+        pydirectinput.mouseUp(button=button)
 
     def should_capture(self):
         return self.capture.clickable()
@@ -147,15 +153,7 @@ class UmiDirectInteraction(BaseInteraction):
             integers = [0, 100]
             random_numbers_x = sorted(random.sample(range(1,100), 10) + integers)
             random_numbers_y = sorted(random.sample(range(1,100), 10) + integers)
-
-            # random_numbers_x = sorted(random.sample(range(50), 10))
-            # random_numbers_y = sorted(random.sample(range(50), 10))
-            # random_numbers_x = sorted(set([random.randint(0, 50) for _ in range(20)]))
-            # random_numbers_y = sorted(set([random.randint(0, 50) for _ in range(20)]))
-            # print('[random_numbers_x]',random_numbers_x)
-            # print(random_numbers_y)
             for i in range(12):
-
                 rand_current_x = random_numbers_x[i] / 100 * (x - current_x)  + current_x
                 rand_current_y = random_numbers_y[i] / 100 * (y - current_y)  + current_y
                 pydirectinput.moveTo(int(rand_current_x), int(rand_current_y))
