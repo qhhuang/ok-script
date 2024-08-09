@@ -1,7 +1,6 @@
 import time
 
 import win32api
-import win32con
 import win32gui
 
 from ok.capture.BaseCaptureMethod import BaseCaptureMethod
@@ -107,10 +106,12 @@ class PostMessageInteraction(BaseInteraction):
     def activate(self):
         self.post(win32con.WM_ACTIVATE, win32con.WA_ACTIVE, 0)
 
-    def click(self, x=-1, y=-1, move_back=False, name=None, down_time=0.01):
+    def click(self, x=-1, y=-1, move_back=False, name=None, down_time=0.01, move=True):
         super().click(x, y, name=name)
-        # self.move(x, y)
-        long_position = self.update_mouse_pos(x, y, activate=True)
+        if move:
+            self.move(x, y)
+            time.sleep(down_time)
+        long_position = self.update_mouse_pos(x, y, activate=not move)
         # self.move(x, y)
         self.post(win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, long_position
                   )
@@ -149,6 +150,8 @@ class PostMessageInteraction(BaseInteraction):
         return True
 
 
+import win32con
+
 vk_key_dict = {
     'F1': win32con.VK_F1,
     'F2': win32con.VK_F2,
@@ -163,5 +166,15 @@ vk_key_dict = {
     'F11': win32con.VK_F11,
     'F12': win32con.VK_F12,
     'ESC': win32con.VK_ESCAPE,
+    'ALT': win32con.VK_MENU,
+    'CONTROL': win32con.VK_CONTROL,
+    'SHIFT': win32con.VK_SHIFT,
+    'TAB': win32con.VK_TAB,
+    'ENTER': win32con.VK_RETURN,
+    'SPACE': win32con.VK_SPACE,
+    'LEFT': win32con.VK_LEFT,
+    'UP': win32con.VK_UP,
+    'RIGHT': win32con.VK_RIGHT,
+    'DOWN': win32con.VK_DOWN,
     # Add more keys as needed
 }
