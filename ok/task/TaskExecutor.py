@@ -180,7 +180,8 @@ class TaskExecutor:
                 sys.exit(0)
             if self.current_task and not self.current_task.enabled:
                 self.current_task = None
-                raise TaskDisabledException()
+                # task stop时 还在读取frame会抛出异常
+                # raise TaskDisabledException()
             if not (self.paused or (
                     self.current_task is not None and self.current_task.paused) or self.interaction is None or not self.interaction.should_capture()):
                 to_sleep = self.pause_end_time - time.time()
