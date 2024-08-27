@@ -184,6 +184,7 @@ class DebugTab(Tab):
         func_name = self.target_function_edit.text()
         task_name = self.config.get('target_task')
         args = self.target_function_params_edit.text()
+        args = args.split(",")
         task = ok.gui.executor.get_task_by_class_name(task_name)
 
         if not hasattr(task, func_name):
@@ -197,7 +198,7 @@ class DebugTab(Tab):
                 ok.gui.device_manager.capture_method = ImageCaptureMethod(images)
                 ok.gui.device_manager.interaction = DoNothingInteraction(ok.gui.device_manager.capture_method)
             ok.gui.executor.debug_mode = True
-            attr = getattr(task, func_name)(args)
+            attr = getattr(task, func_name)(*args)
             if callable(attr):
                 result = str(attr())
             else:
