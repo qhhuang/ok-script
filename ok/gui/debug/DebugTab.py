@@ -28,7 +28,7 @@ class DebugTab(Tab):
     def __init__(self, app_config, exit_event):
 
         super().__init__()
-        self.config = Config('debug', {'target_task': "", 'target_images': [], 'target_function': ""}
+        self.config = Config('debug', {'target_task': "", 'target_images': [], 'target_function': "", 'target_function_params': ""}
                              )
         self.log_window_config = Config('log_window', {'width': 800, 'height': 300, 'x': 0, 'y': 0, 'keyword': '',
                                                        'level': 'ALL', 'show': True})
@@ -97,6 +97,14 @@ class DebugTab(Tab):
         if self.config.get('target_function'):
             self.target_function_edit.setText(self.config.get('target_function'))
         call_task_layout.addWidget(self.target_function_edit, stretch=1)
+
+        self.target_function_params_edit = SearchLineEdit(self)
+        self.target_function_params_edit.setPlaceholderText(self.tr('Type a function or property'))
+        self.target_function_params_edit.setClearButtonEnabled(True)
+        if self.config.get('target_function_params'):
+            self.target_function_params_edit.setText(self.config.get('target_function_params'))
+        call_task_layout.addWidget(self.target_function_params_edit, stretch=1)
+
 
         if self.config.get('target_task') in class_names:
             self.tasks_combo_box.setText(self.config.get('target_task'))
@@ -175,6 +183,7 @@ class DebugTab(Tab):
     def call(self):
         func_name = self.target_function_edit.text()
         task_name = self.config.get('target_task')
+        args = self.target_function_params_edit.text()
         task = ok.gui.executor.get_task_by_class_name(task_name)
 
         if not hasattr(task, func_name):
@@ -188,7 +197,7 @@ class DebugTab(Tab):
                 ok.gui.device_manager.capture_method = ImageCaptureMethod(images)
                 ok.gui.device_manager.interaction = DoNothingInteraction(ok.gui.device_manager.capture_method)
             ok.gui.executor.debug_mode = True
-            attr = getattr(task, func_name)
+            attr = getattr(task, func_name)(args)
             if callable(attr):
                 result = str(attr())
             else:

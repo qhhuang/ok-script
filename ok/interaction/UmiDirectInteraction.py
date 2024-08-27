@@ -44,7 +44,7 @@ class UmiDirectInteraction(BaseInteraction):
         if not self.capture.clickable():
             return
         x, y = self.capture.get_abs_cords(x, y)
-        self.move_to(x,y)
+        self.move_to(x, y)
 
     def swipe(self, x1, y1, x2, y2, duration):
         # Convert coordinates to integers
@@ -77,7 +77,7 @@ class UmiDirectInteraction(BaseInteraction):
         # Release the left mouse button
         pydirectinput.mouseUp()
 
-    def click(self, x=-1, y=-1, move_back=False, name=None):
+    def click(self, x=-1, y=-1, move_back=False, name=None, **kwargs):
         super().click(x, y, name=name)
         if not self.capture.clickable():
             logger.info(f"window in background, not clickable")
@@ -90,7 +90,7 @@ class UmiDirectInteraction(BaseInteraction):
         if x != -1 and y != -1:
             x, y = self.capture.get_abs_cords(x, y)
             logger.info(f"left_click {x, y}")
-            self.move_to(x,y)
+            self.move_to(x, y)
 
         pydirectinput.click()
         if current_x != -1 and current_y != -1:
@@ -109,7 +109,7 @@ class UmiDirectInteraction(BaseInteraction):
         if x != -1 and y != -1:
             x, y = self.capture.get_abs_cords(x, y)
             logger.info(f"left_click {x, y}")
-            self.move_to(x,y)
+            self.move_to(x, y)
         pydirectinput.rightClick()
         if current_x != -1 and current_y != -1:
             pydirectinput.moveTo(current_x, current_y)
@@ -121,11 +121,12 @@ class UmiDirectInteraction(BaseInteraction):
         if x != -1 and y != -1:
             x, y = self.capture.get_abs_cords(x, y)
             logger.info(f"left_click {x, y}")
-            self.move_to(x,y)
+            self.move_to(x, y)
         button = self.get_mouse_button(key)
         pydirectinput.mouseDown(button=button)
 
-    def get_mouse_button(self, key):
+    @staticmethod
+    def get_mouse_button(key):
         button = pydirectinput.LEFT if key == "left" else pydirectinput.RIGHT
         return button
 
@@ -139,7 +140,8 @@ class UmiDirectInteraction(BaseInteraction):
     def should_capture(self):
         return self.capture.clickable()
 
-    def calculate_distance(self,  x=-1, y=-1):
+    @staticmethod
+    def calculate_distance(x=-1, y=-1):
         current_x, current_y = pydirectinput.position()
         if x != -1 and y != -1:
             return math.sqrt((current_x - x) ** 2 + (current_y - y) ** 2)
@@ -151,15 +153,14 @@ class UmiDirectInteraction(BaseInteraction):
             print('UmiDirectInteraction 注入')
             current_x, current_y = pydirectinput.position()
             integers = [0, 100]
-            random_numbers_x = sorted(random.sample(range(1,100), 10) + integers)
-            random_numbers_y = sorted(random.sample(range(1,100), 10) + integers)
+            random_numbers_x = sorted(random.sample(range(1, 100), 10) + integers)
+            random_numbers_y = sorted(random.sample(range(1, 100), 10) + integers)
             for i in range(12):
-                rand_current_x = random_numbers_x[i] / 100 * (x - current_x)  + current_x
-                rand_current_y = random_numbers_y[i] / 100 * (y - current_y)  + current_y
+                rand_current_x = random_numbers_x[i] / 100 * (x - current_x) + current_x
+                rand_current_y = random_numbers_y[i] / 100 * (y - current_y) + current_y
                 pydirectinput.moveTo(int(rand_current_x), int(rand_current_y))
         else:
             pydirectinput.moveTo(x, y)
-
 
 
 def is_admin():
