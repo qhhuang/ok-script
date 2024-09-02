@@ -184,7 +184,10 @@ class DebugTab(Tab):
         func_name = self.target_function_edit.text()
         task_name = self.config.get('target_task')
         args = self.target_function_params_edit.text()
-        args = args.split(",")
+        if args == '':
+            args = []
+        else:
+            args = args.split(",")
         task = ok.gui.executor.get_task_by_class_name(task_name)
 
         if not hasattr(task, func_name):
